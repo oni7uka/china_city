@@ -58,6 +58,10 @@ module ChinaCity
       code[0..5].rjust(6,'0')
     end
 
+    def street(code)
+      code[0..8].rjust(9,'0')
+    end
+
     def data
       unless @list
         #{ '440000' =>
@@ -79,10 +83,10 @@ module ChinaCity
         @list = {}
         #@see: https://github.com/cn/GB2260
         json = JSON.parse(File.read("#{Engine.root}/db/areas.json"))
-        streets = json.values.flatten
-        streets.each do |street|
-          id = street['id']
-          text = street['text']
+        areas = json.values.flatten
+        areas.each do |area|
+          id = area['id']
+          text = area['text']
           if id.size == 6    # 省市区
             if id.end_with?('0000')                           # 省
               @list[id] =  {:text => text, :children => {}}
@@ -97,7 +101,7 @@ module ChinaCity
               @list[province_id][:children][city_id] = {:text => text, :children => {}} unless @list[province_id][:children].has_key?(city_id)
               @list[province_id][:children][city_id][:children][id] = {:text => text, :children => {}}
             end
-          else               # 街道
+          elsif id.size == 9               # 街道
             province_id = province(id)
             city_id     = city(id)
             district_id = district(id)
@@ -105,6 +109,16 @@ module ChinaCity
             @list[province_id][:children][city_id] = {:text => text, :children => {}} unless @list[province_id][:children].has_key?(city_id)
             @list[province_id][:children][city_id][:children][district_id] = {:text => text, :children => {}} unless @list[province_id][:children][city_id][:children].has_key?(district_id)
             @list[province_id][:children][city_id][:children][district_id][:children][id] = {:text => text}
+          else
+            province_id = province(id)
+            city_id     = city(id)
+            district_id = district(id)
+            street_id = street(id)
+            @list[province_id] = {:text => text, :children => {}} unless @list.has_key?(province_id)
+            @list[province_id][:children][city_id] = {:text => text, :children => {}} unless @list[province_id][:children].has_key?(city_id)
+            @list[province_id][:children][city_id][:children][district_id] = {:text => text, :children => {}} unless @list[province_id][:children][city_id][:children].has_key?(district_id)
+            @list[province_id][:children][city_id][:children][district_id][:children][street_id] = {:text => text, :children => {}} unless @list[province_id][:children][city_id][:children][district_id][:children].has_key?(street_id)
+            @list[province_id][:children][city_id][:children][district_id][:children][street_id][:children][id] = {:text => text}
           end
         end
       end

@@ -1,7 +1,7 @@
 PATH
   remote: ../
   specs:
-    china_city (0.0.5)
+    china_city (0.0.6)
       jquery-rails (~> 3)
       rails (~> 4.0)
 
@@ -150,4 +150,4 @@ DEPENDENCIES
   sqlite3 (~> 1.3)
 
 BUNDLED WITH
-   1.10.6
+   1.11.2
