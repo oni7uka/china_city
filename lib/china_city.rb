@@ -12,10 +12,12 @@ module ChinaCity
       province_id = province(parent_id)
       city_id     = city(parent_id)
       district_id = district(parent_id)
+      street_id = street(parent_id)
       children = data
       children = children[province_id][:children] if children.has_key?(province_id)
       children = children[city_id][:children] if children.has_key?(city_id)
       children = children[district_id][:children] if children.has_key?(district_id)
+      children = children[street_id][:children] if children.has_key?(street_id)
       children.each_key do |id|
         result.push [children[id][:text], id]
       end
@@ -42,7 +44,11 @@ module ChinaCity
       district_id = district(id)
       district_text = children[district_id][:text]
       children = children[district_id][:children]
-      return "#{prepend_parent ? (province_text + city_text + district_text) : ''}#{children[id][:text]}"
+      return "#{prepend_parent ? (province_text + city_text + district_text) : ''}#{children[id][:text]}" if children.has_key?(id)
+      street_id = street(id)
+      street_text = children[street_id][:text]
+      children = children[street_id][:children]
+      return "#{prepend_parent ? (province_text + city_text + district_text + street_text) : ''}#{children[id][:text]}"
     end
 
     def province(code)
