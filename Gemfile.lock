@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     china_city (0.0.6)
-      jquery-rails (~> 3)
+      jquery-rails
       rails (~> 4.0)
 
 GEM
