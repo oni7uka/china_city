@@ -1,6 +1,6 @@
 # encoding: utf-8
 require "china_city/engine"
-
+require 'pp'
 module ChinaCity
   CHINA = '000000' # 全国
   PATTERN = /(\d{2})(\d{2})(\d{2})/
@@ -68,6 +68,10 @@ module ChinaCity
       code[0..8].rjust(9,'0')
     end
 
+    def lazy_init(lazy)
+      data unless lazy
+    end
+
     def data
       unless @list
         #{ '440000' =>
@@ -114,7 +118,7 @@ module ChinaCity
             @list[province_id] = {:text => text, :children => {}} unless @list.has_key?(province_id)
             @list[province_id][:children][city_id] = {:text => text, :children => {}} unless @list[province_id][:children].has_key?(city_id)
             @list[province_id][:children][city_id][:children][district_id] = {:text => text, :children => {}} unless @list[province_id][:children][city_id][:children].has_key?(district_id)
-            @list[province_id][:children][city_id][:children][district_id][:children][id] = {:text => text}
+            @list[province_id][:children][city_id][:children][district_id][:children][id] = {:text => text,:children => {}}
           else
             province_id = province(id)
             city_id     = city(id)
@@ -123,11 +127,13 @@ module ChinaCity
             @list[province_id] = {:text => text, :children => {}} unless @list.has_key?(province_id)
             @list[province_id][:children][city_id] = {:text => text, :children => {}} unless @list[province_id][:children].has_key?(city_id)
             @list[province_id][:children][city_id][:children][district_id] = {:text => text, :children => {}} unless @list[province_id][:children][city_id][:children].has_key?(district_id)
+
             @list[province_id][:children][city_id][:children][district_id][:children][street_id] = {:text => text, :children => {}} unless @list[province_id][:children][city_id][:children][district_id][:children].has_key?(street_id)
             @list[province_id][:children][city_id][:children][district_id][:children][street_id][:children][id] = {:text => text}
           end
         end
       end
+
       @list
     end
 
